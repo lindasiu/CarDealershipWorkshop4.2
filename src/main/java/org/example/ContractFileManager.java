@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ContractFileManager {
-    private static final String FILE_PATH = "src/main/resources/contracts.csv";
+    private static final String FILE_PATH = "src/main/resources/Contracts.csv";
 
     public static void saveContract(Contract contract){
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))){
@@ -31,7 +31,7 @@ public class ContractFileManager {
             }
             writer.write(line.toString());
             writer.newLine();
-            System.out.println("Contract has been undated!");
+            System.out.println("Contract has been updated!");
         }
         catch(IOException e){
             System.out.println("Error: Was not able to update contract");

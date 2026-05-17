@@ -5,16 +5,16 @@ import java.nio.Buffer;
 import java.util.Scanner;
 
 public class DealershipFileManager {
-    private static final String FILE_PATH = "src/main/resources/inventory.csv";
 
     public static Dealership getDealership(){
         Dealership dealership = null;
 
         try{
-            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/inventory.csv"));
             String line;
 
-            if((line = reader.readLine()) != null){
+            line = reader.readLine();
+            if(line != null){
                 String[] dealershipData = line.split("\\|");
                 String name = dealershipData[0];
                 String address = dealershipData[1];
@@ -54,7 +54,7 @@ public class DealershipFileManager {
         return dealership;
     }
         public static void saveDealership(Dealership dealership){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/inventory.csv"))){
             String headerLine = String.format("%s|%s|%s\n", dealership.getName(), dealership.getAddress(),
                     dealership.getPhone());
             writer.write(headerLine);

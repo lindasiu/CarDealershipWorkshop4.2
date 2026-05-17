@@ -11,6 +11,7 @@ public class UserInterface {
 
     public UserInterface(){
     this.scanner = new Scanner(System.in);
+    init();
     }
     private void init(){
         DealershipFileManager fileManager = new DealershipFileManager();
@@ -292,7 +293,7 @@ public class UserInterface {
             DealershipFileManager.saveDealership(this.dealership);
             System.out.println("Transaction has been completed!");
         }
-    }
+
 
 }
 
