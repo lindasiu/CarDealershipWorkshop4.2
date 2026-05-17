@@ -38,6 +38,7 @@ public class UserInterface {
             System.out.println("7. View all vehicles");
             System.out.println("8. Add vehicle");
             System.out.println("9. Remove vehicle");
+            System.out.println("10. Sell / Lease a Vehicle");
             System.out.println("0. EXIT");
 
             int choice = scanner.nextInt();
@@ -71,13 +72,16 @@ public class UserInterface {
                 case 9:
                     processRemoveVehicleRequest();
                     break;
+                case 10:
+                    processNewContractRequest();
+                    break;
                 case 0:
                     System.out.println("Thank you for visiting. See you next time!");
                     System.out.println("BYE BYE!");
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Error: Please enter a number between 1 - 9, or 0 to EXIT");
+                    System.out.println("Error: Please enter a number between 1 - 10, or 0 to EXIT");
                     break;
             }
         }
@@ -175,9 +179,11 @@ public class UserInterface {
 
         System.out.println("Enter Vin: ");
         int vin = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.println("Enter Year: ");
         int year = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.println("Enter Make: ");
         String make = scanner.nextLine().trim();
@@ -205,7 +211,7 @@ public class UserInterface {
 
         System.out.println("\n===== Vehicle has been added! =====");
     }
-    public void processRemoveVehicleRequest(){
+    public void processRemoveVehicleRequest() {
         System.out.println("\n===== Remove a Vehicle from Inventory =====");
 
         System.out.println("Enter VIN number to remove the vehicle: ");
@@ -213,20 +219,78 @@ public class UserInterface {
         scanner.nextLine();
 
         Vehicle removeVehicle = null;
-        for(Vehicle v : this.dealership.getAllVehicles()){
-            if(v.getVin() == vinInput){
+        for (Vehicle v : this.dealership.getAllVehicles()) {
+            if (v.getVin() == vinInput) {
                 removeVehicle = v;
                 break;
             }
         }
-        if (removeVehicle != null){
+        if (removeVehicle != null) {
             this.dealership.removeVehicle(removeVehicle);
             DealershipFileManager.saveDealership(this.dealership);
 
             System.out.println("\nVehicle with VIN number: " + vinInput + " has been removed!");
-        }
-        else{
+        } else {
             System.out.println("Vehicle not found");
+        }
+    }
+        public void processNewContractRequest(){
+            System.out.println("\n===== New Sale or Lease Contract =====");
+            System.out.println("Enter VIN number: ");
+            int vinNumber = scanner.nextInt();
+            scanner.nextLine();
+
+            Vehicle vehicle = null;
+            for(Vehicle v : this.dealership.getAllVehicles()){
+                if(v.getVin() == vinNumber){
+                    vehicle = v;
+                    break;
+                }
+            }
+            if(vehicle == null){
+                System.out.println("Error: Vehicle VIN number not found");
+                return;
+            }
+            System.out.println("Enter Contract Date (YYYY/MM/DD): ");
+            String date = scanner.nextLine().trim();
+
+            System.out.println("Enter Customer Full Name: ");
+            String customerName = scanner.nextLine().trim();
+
+            System.out.println("Enter Customer Email Address: ");
+            String customerEmail = scanner.nextLine().trim();
+
+            System.out.println("SALE or LEASING?: ");
+            String contractType = scanner.nextLine().trim().toUpperCase();
+
+            Contract finalContract = null;
+
+            if(contractType.equals("SALE")){
+                System.out.println("Will the customer be financing? (YES/NO): ");
+                String financeInput = scanner.nextLine().trim().toUpperCase();
+                boolean yesFinance = financeInput.equals("YES");
+
+                finalContract = new SalesContract(date, customerName, customerEmail, vehicle, yesFinance);
+            }
+            else if(contractType.equals("LEASE")){
+                if(vehicle.getYear() < 2023){
+                    System.out.println("Cannot lease to older models!");
+                }
+                finalContract = new LeaseContract(date, customerName, customerEmail, vehicle);
+            }else{
+                System.out.println("Invalid contract selection");
+                return;
+            }
+            System.out.println("\n===== Contract Review =====");
+            System.out.printf("Base Vehicle Price: $%.2f\n", vehicle.getPrice());
+            System.out.printf("Calculated Out-The-Door Total: $%.2f\n", finalContract.getTotalPrice());
+            System.out.printf("Calculated Expected Monthly Statement: $%.2f\n", finalContract.getMonthlyPayment());
+            ContractFileManager.saveContract(finalContract);
+
+            this.dealership.removeVehicle(vehicle);
+
+            DealershipFileManager.saveDealership(this.dealership);
+            System.out.println("Transaction has been completed!");
         }
     }
 

@@ -6,7 +6,7 @@ public class SalesContract extends Contract{
     private double processingFee;
     private boolean isFinanced;
 
-    public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, double salesTaxAmount, double recordingFee, double processingFee, boolean isFinanced) {
+    public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, /*double salesTaxAmount, double recordingFee, double processingFee,*/ boolean isFinanced) {
         super(date, customerName, customerEmail, vehicleSold);
         this.isFinanced = isFinanced;
         double vehiclePrice = vehicleSold.getPrice();
